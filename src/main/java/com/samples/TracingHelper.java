@@ -13,13 +13,18 @@ public class TracingHelper {
 
     private String shortestTrace = "";
     private String uniqueConnectedVertices ="";
-    public TracingHelper(String raw){
+    public TracingHelper(String raw) throws Exception {
         init(raw);
     }
 
 
-    public void init(String raw){
-        String[] rawConns = raw.split(",");
+    public void init(String raw) throws Exception {
+        String validatedRaw = validateRawStr(raw);
+        if(validatedRaw.trim().length()==0) {
+            //System.out.println("Invalid Line");
+            throw new Exception("Invalid Line");
+        }
+        String[] rawConns = validatedRaw.split(",");
         for(int i=0;i<rawConns.length;i++){
             String temp = rawConns[i].trim();
             String conn = temp.length()>=3 ? temp.substring(0,2).toUpperCase():"invalid";
@@ -56,6 +61,18 @@ public class TracingHelper {
 
     }
 
+    String validateRawStr(String rawStr) {
+        String[] strArr = rawStr.trim().split(",");
+        StringBuilder sb = new StringBuilder();
+        for(int i=0;i<strArr.length;i++){
+            String conn = strArr[i].trim();
+            if(conn.length()>0 && conn.matches("[A-Z]{2}[0-9]{1}")){
+                sb.append(strArr[i].trim()+",");
+            }
+        }
+        return sb.toString().length() > 0 ? sb.toString().substring(0,sb.toString().length()-1):"";
+    }
+
     String findUnique(String str) {
         String result = "";
         for(int i=0;i<str.length();i++){
@@ -64,13 +81,6 @@ public class TracingHelper {
             }
         }
         return result;
-    }
-
-    public void injestNewValues(String rawTrace) {
-        getConnLatMap().clear();
-        getLinks().clear();
-        init(rawTrace);
-
     }
 
     public String getUniqueConnectedVertices() {

@@ -20,12 +20,23 @@ public class Main {
         FileReader fileReader = new FileReader(new File(filename));
         BufferedReader bufferedReader = new BufferedReader(fileReader);
         String line = null;
-        while ((line = bufferedReader.readLine()) != null) {
+        int lineCount =1;
+        while ((line = bufferedReader.readLine()) != null ) {
+            if(line.trim().length()==0) {lineCount++;continue;}
+            System.out.printf("**************** Line-%d ****************",lineCount++);
+            System.out.println();
             line = line.toUpperCase().trim();
             // read file. skip lines with anything other than A-Z 0-9 \, space
             line = line.replaceAll("\"", "");
             if(line.matches("[0-9a-zA-Z \\, \\ ]+")){
-                TracingHelper helper = new TracingHelper(line);
+
+                TracingHelper helper=null;
+                try {
+                    helper = new TracingHelper(line);
+                } catch(Exception ex) {
+                    System.out.println("Invalid line");
+                    continue;
+                }
                 //1-5
                 main.averageLatency(1,"A-B-C", helper);
                 main.averageLatency(2,"A-D",helper);

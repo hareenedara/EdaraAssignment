@@ -53,4 +53,22 @@ class TestInit extends Specification {
             "AB5, BC4, CD8, DC8, DE6, AD5, CE2, EB3, AE7" | 5
     }
 
+
+    def 'Test initializing: Test invalid input line validation'() {
+
+        when:
+            TracingHelper helper = new TracingHelper(rawString);
+        then:
+
+            def ex = thrown(Exception);
+            ex.message == exceptionMessage
+
+        where:
+            rawString  | exceptionMessage
+            ", , ,,,"   |  "Invalid Line"
+            "abcdef,ghij,klmn"| "Invalid Line"
+            "####****"  | "Invalid Line"
+
+    }
+
 }
